@@ -6,6 +6,7 @@
         "soundDisableResponse": "we're no longer boomin'",
         "soundPublicResponse": "chaos is afoot",
         "soundPrivateResponse": "order is in place",
+        "repoResponse": "here you go \n https://github.com/SkySourced/boomer",
         "vineboomResponse": "come get a load of this `vine boom`",
         "objectionResponse": "come get a load of this `objection`"
     },

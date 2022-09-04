@@ -14,6 +14,7 @@ const enableResponse = config.messages.soundEnableResponse // importing soundEna
 const disableResponse = config.messages.soundDisableResponse // importing soundDisableResponse from config.json
 const publicResponse = config.messages.soundPublicResponse // importing soundPublicResponse from config.json
 const privateResponse = config.messages.soundPrivateResponse // importing soundPrivateResponse from config.json
+const repoResponse = config.messages.repoResponse // importing repoResponse from config.json
 const vineboomResponse = config.messages.vineboomResponse // importing vineboomResponse from config.json
 const objectionResponse = config.messages.objectionResponse // importing objectionResponse from config.json
 const maxInterval = config.frequency // importing frequency from config.json
@@ -24,9 +25,7 @@ const objectionPath = config.paths.objection // path to the objection sound effe
 // player def
 const vineBoomPlayer = createAudioPlayer()
 const objectionPlayer = createAudioPlayer()
-
 let resource
-
 
 vineBoomPlayer.on('error', error => {
   console.error(error)
@@ -37,14 +36,14 @@ const rest = new REST({ version: '9' }).setToken(TOKEN) // creating a new rest c
 let enabled = true // if the bot is enabled or not
 const guildDataStorage = new Collection()
 /* guildDataStorage structure
-    {
-        "123456789012345": { // guild id
-            members: ["123456789012345", "123456789012345"], // member ids of users in the voice channel
-            channel: "123456789012345", // voice channel id,
-            sfx: "vineboom" | "objection", // sound effect to play
-            availablility: "public" | "private" // if the sound effect is available to everyone or only to admins
-        }
+  {
+    "123456789012345": { // guild id
+      members: ["123456789012345", "123456789012345"], // member ids of users in the voice channel
+      channel: "123456789012345", // voice channel id,
+      sfx: "vineboom" | "objection", // sound effect to play
+      availablility: "public" | "private" // if the sound effect is available to everyone or only to admins
     }
+  }
  */
 
 const commands = [// creating an array of commands
@@ -86,7 +85,10 @@ const commands = [// creating an array of commands
           { name: 'vine boom', value: 'vineboom' },
           { name: 'phoenix wright objection', value: 'objection' }
         )
-    )
+    ),
+  new SlashCommandBuilder() // creating a new command
+    .setName('repo')
+    .setDescription('Sends the link to the github repo, for information and bug reports')
 ]
 
 async function syncGlobalSlashCommands () {
@@ -222,6 +224,8 @@ CLIENT.on('interactionCreate', async interaction => { // when an interaction is 
       guildDataStorage.set(interaction.guildId, cache)
       await interaction.reply({ content: objectionResponse, ephemeral: true })
     }
+  } else if (interaction.commandName === 'repo') {
+    await interaction.reply({ content: repoResponse, ephemeral: true })
   }
 })
 
