@@ -3,21 +3,27 @@ import { REST } from "@discordjs/rest"; // importing rest library from discord.j
 import { SlashCommandBuilder } from "@discordjs/builders"; // importing builder library from discord.js
 import { joinVoiceChannel, getVoiceConnection, createAudioPlayer, createAudioResource } from "@discordjs/voice"; // importing voice library from discord.js
 const CLIENT = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] }); // creating a new client
-import config from "./config.json" assert {type: 'json'}; // importing config
-import token from "./token.json" assert {type: 'json'}; // importing token
+import config from "./config.json"; // importing config
+import token from "./token.json"; // importing token
 
 // imports from json
 const TOKEN = token.token; // token
 const CLIENT_ID = config.client_id; // client id
+
 const enableResponse = config.messages.soundEnableResponse; // importing soundEnableResponse from config.json
 const disableResponse = config.messages.soundDisableResponse; // importing soundDisableResponse from config.json
 const publicResponse = config.messages.soundPublicResponse; // importing soundPublicResponse from config.json
 const privateResponse = config.messages.soundPrivateResponse; // importing soundPrivateResponse from config.json
+const vineboomResponse = config.messages.vineboomResponse; // importing vineboomResponse from config.json
+const objectionResponse = config.messages.objectionResponse; // importing objectionResponse from config.json
+
 const vineboomPath = config.paths.vineboom; // path to the vineboom sound effect
 const objectionPath = config.paths.objection; // path to the objection sound effect
 
 // player def
 const vineBoomPlayer = createAudioPlayer();
+const objectionPlayer = createAudioPlayer();
+
 var resource;
 
 var maxInterval = 20; // max interval between sound effects (mins)
@@ -29,8 +35,8 @@ vineBoomPlayer.on('error', error => {
 const rest = new REST({version: '9'}).setToken(TOKEN); // creating a new rest client to sync slash commands
 
 var enabled = true; // if the bot is enabled or not
-var activeVoiceChannels = new Collection;
-/* activeVoiceChannels structure
+var guildDataStorage = new Collection;
+/* guildDataStorage structure
     {
         "123456789012345": { // guild id
             members: ["123456789012345", "123456789012345"], // member ids of users in the voice channel
@@ -61,13 +67,26 @@ const commands = [// creating an array of commands
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator) // setting the minimum permissions of the command
         .addStringOption(availability => // adding user input
             availability.setName("availability") // setting the name of the option
-                .setDescription("Whether setStatus is publicly available") // setting the description of the option
+                .setDescription("If other commands are publicly available") // setting the description of the option
                 .setRequired(true) // setting the option as required
                 .addChoices( // adding choices to the option
                     { name: "open the floodgates", value: "public" }, // public choice
                     { name: "return to order", value: "private" } // private choice
                 )
         ),
+    new SlashCommandBuilder() // creating a new command
+        .setName("setsfx")
+        .setDescription("Changes the sound effect that is played")
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+        .addStringOption(sfx =>
+            sfx.setName("sfx")
+                .setDescription("The sound effect to play")
+                .setRequired(true)
+                .addChoices(
+                    { name: "vine boom", value: "vineboom" },
+                    { name: "phoenix wright objection", value: "objection" }
+                )
+        )
 ]
 
 async function syncGlobalSlashCommands() {
@@ -99,17 +118,27 @@ async function syncSlashCommands(guildId){
 }
 
 function playVineBoom(){
-    //resource = createAudioResource(vineboomPath) // create audio resource (vineboom)
-    resource = createAudioResource(objectionPath) // create audio resource (objection)
-    player.play(resource) // play the audio
+    resource = createAudioResource(vineboomPath) // create audio resource (vineboom)
+    vineBoomPlayer.play(resource) // play the audio
     setTimeout(resetVineBoom, 4000) // the sound effect is around 3 seconds long so this prevents the bot from playing the sound effect too frequently
 }
 
 function resetVineBoom(){
-    player.stop(resource) // stop the audio (in case it hasn't finished playing (probably not necessary))
+    vineBoomPlayer.stop(resource) // stop the audio (in case it hasn't finished playing (probably not necessary))
     var interval = Math.ceil(Math.random() * maxInterval * 60000) // random interval between 0 and 1200 seconds (20 mins)
-    //console.log("Next sfx in " + interval + " seconds")
     setTimeout(playVineBoom, interval) // play the sound effect again after a random amount of time
+}
+
+function playObjection(){
+    resource = createAudioResource(objectionPath) // create audio resource (objection)
+    objectionPlayer.play(resource) // play the audio
+    setTimeout(resetObjection, 2000) // the sound effect is around 1 second long so this prevents the bot from playing the sound effect too frequently
+}
+
+function resetObjection(){
+    objectionPlayer.stop(resource) // stop the audio (in case it hasn't finished playing (probably not necessary))
+    var interval = Math.ceil(Math.random() * maxInterval * 60000) // random interval between 0 and 1200 seconds (20 mins)
+    setTimeout(playObjection, interval) // play the sound effect again after a random amount of time
 }
 
 function join(voiceState, cache){
@@ -118,8 +147,12 @@ function join(voiceState, cache){
         guildId: voiceState.guild.id,
         adapterCreator: voiceState.guild.voiceAdapterCreator
     })
-    connection.subscribe(player);
-    activeVoiceChannels.set(voiceState.guild.id, cache)
+    if (guildDataStorage.get(voiceState.guild.id).sfx == "vineboom"){
+        connection.subscribe(vineBoomPlayer);
+    } else if (guildDataStorage.get(voiceState.guild.id).sfx == "objection"){
+        connection.subscribe(objectionPlayer);
+    }
+    guildDataStorage.set(voiceState.guild.id, cache)
     //console.log('joined channel ' + voiceState.channel.name + ' in ' + voiceState.guild.name);
 }
 
@@ -128,18 +161,19 @@ function leave(voiceState, cache){
     var connection = getVoiceConnection(voiceState.guild.id)
     if(connection) connection.destroy();
     cache.channel = null;
-    activeVoiceChannels.set(voiceState.guild.id, cache)
+    guildDataStorage.set(voiceState.guild.id, cache)
 }
 
 CLIENT.on('ready', async () => { // when the client is ready
     await syncGlobalSlashCommands() // sync commands with discord
     console.log(`Logged in as ${CLIENT.user.tag}!`); // log in the console that the client is ready
-    playVineBoom()
+    playVineBoom() // start the audio players ready for connection
+    playObjection()
     for(let i = 0; i < CLIENT.guilds.cache.size; i++){
-        activeVoiceChannels.set(CLIENT.guilds.cache.keyAt(i), {members: [], channel: null, sfx: "vineboom", availability: "private"});
+        guildDataStorage.set(CLIENT.guilds.cache.keyAt(i), {members: [], channel: null, sfx: "vineboom", availability: "private"});
     } // for each guild the client is in
-    console.log("-- Active Voice Channels --");
-    console.log(activeVoiceChannels);
+    console.log("-- Guild Data Storage --");
+    console.log(guildDataStorage);
 })
 
 CLIENT.on('interactionCreate', async interaction => { // when an interaction is created
@@ -153,20 +187,40 @@ CLIENT.on('interactionCreate', async interaction => { // when an interaction is 
             enabled = false; // set enabled to false
             var connection = getVoiceConnection(interaction.guild.id)
             if(connection) connection.destroy();
-            let cache = activeVoiceChannels.get(interaction.guild.id);
+            let cache = guildDataStorage.get(interaction.guild.id);
             cache.channel = null;
-            activeVoiceChannels.set(interaction.guildId, cache)
+            guildDataStorage.set(interaction.guildId, cache)
             await interaction.reply({ content: disableResponse, ephemeral: true})
         }
     } else if (interaction.commandName === 'setavailablility') { // if the interaction is the setAvailablility command
         if(interaction.options.getString('availability') === 'public') { // if the interaction is public
             commands[0].setDefaultMemberPermissions(PermissionFlagsBits.SendMessages) // set the minimum permissions to low-level
+            commands[2].setDefaultMemberPermissions(PermissionFlagsBits.SendMessages) 
+            let cache = guildDataStorage.get(interaction.guild.id);
+            cache.availability = "public";
+            guildDataStorage.set(interaction.guildId, cache);
             await syncSlashCommands(interaction.guildId) // sync commands with discord
             await interaction.reply({ content: publicResponse, ephemeral: true})
         } else if (interaction.options.getString('availability') === 'private') { // if the interaction is private
             commands[0].setDefaultMemberPermissions(PermissionFlagsBits.Administrator) // set the minimum permissions to administrator
+            commands[2].setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+            let cache = guildDataStorage.get(interaction.guild.id);
+            cache.availability = "private";
+            guildDataStorage.set(interaction.guildId, cache);
             await syncSlashCommands(interaction.guildId) // sync commands with discord
             await interaction.reply({ content: privateResponse, ephemeral: true})
+        }
+    } else if (interaction.commandName === 'setsfx'){
+        if(interaction.options.getString('sfx') === 'vineboom'){
+            let cache = guildDataStorage.get(interaction.guild.id);
+            cache.sfx = "vineboom";
+            guildDataStorage.set(interaction.guildId, cache)
+            await interaction.reply({ content: vineboomResponse, ephemeral: true})
+        } else if (interaction.options.getString('sfx') === 'objection'){
+            let cache = guildDataStorage.get(interaction.guild.id);
+            cache.sfx = "objection";
+            guildDataStorage.set(interaction.guildId, cache)
+            await interaction.reply({ content: objectionResponse, ephemeral: true})
         }
     }
 })
@@ -175,7 +229,7 @@ CLIENT.on('voiceStateUpdate', async (_oldState, newState) => {
     //await newState.channel.members.fetch();
     if(!enabled){ console.log("disabled"); return };
 
-    let cache = activeVoiceChannels.get(newState.guild.id);
+    let cache = guildDataStorage.get(newState.guild.id);
     let userLeaving = false;
     cache.members.forEach(member => { // if user is in the channel already, flag as leaving
         if(member === newState.id){
@@ -184,7 +238,6 @@ CLIENT.on('voiceStateUpdate', async (_oldState, newState) => {
         }
     });
     if(userLeaving){ // if user is leaving
-        console.log("attempting leave");
         let leaverIndex = cache.members.indexOf(newState.id);
         cache.members.splice(leaverIndex, 1);
         if(cache.members.length === 1){

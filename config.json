@@ -5,7 +5,9 @@
         "soundEnableResponse": "we're boomin' now chief",
         "soundDisableResponse": "we're no longer boomin'",
         "soundPublicResponse": "chaos is afoot",
-        "soundPrivateResponse": "order is in place"
+        "soundPrivateResponse": "order is in place",
+        "vineboomResponse": "come get a load of this `vine boom`",
+        "objectionResponse": "come get a load of this `objection`"
     },
     "paths": { // sound file locations
         "vineboom": "./assets/vineboom.mp3",
