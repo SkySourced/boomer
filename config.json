@@ -1,6 +1,6 @@
 {
     "client_id": "1012847083629334548",
-    "frequency": 0.33,
+    "frequency": 20,
     "messages": { 
         "soundEnableResponse": "we're boomin' now chief",
         "soundDisableResponse": "we're no longer boomin'",

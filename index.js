@@ -123,12 +123,10 @@ async function syncSlashCommands (guildId) {
 function playFiller(player, amount, i){
   resource = createAudioResource(fillerPath) // creating a new audio resource (1 second 1hz sound)
   player.play(resource) // playing the audio resource
-  player.on(AudioPlayerStatus.Idle, () => { // when the audio resource is done playing
-    i++; // increment i
-    if(i < amount){ // if there is still more time to fill
-      playFiller(player, amount, i) // play another second
-    }
-  })
+  i++
+  if(i < amount){
+    setTimeout(playFiller(player, amount, i), 1000) // playing the filler sound every second
+  }
 }
 
 function playVineBoom () {
