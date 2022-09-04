@@ -1,0 +1,14 @@
+{
+    "client_id": "1012847083629334548", // bot id
+    "frequency": 20, // in minutes
+    "messages": { // various responses to commands
+        "soundEnableResponse": "we're boomin' now chief",
+        "soundDisableResponse": "we're no longer boomin'",
+        "soundPublicResponse": "chaos is afoot",
+        "soundPrivateResponse": "order is in place"
+    },
+    "paths": { // sound file locations
+        "vineboom": "./vineboom.mp3",
+        "objection": "./objection.mp3"
+    }
+}
