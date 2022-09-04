@@ -2,24 +2,26 @@ import { Client, GatewayIntentBits, Routes, PermissionFlagsBits, Collection } fr
 import { REST } from '@discordjs/rest' // importing rest library from discord.js
 import { SlashCommandBuilder } from '@discordjs/builders' // importing builder library from discord.js
 import { joinVoiceChannel, getVoiceConnection, createAudioPlayer, createAudioResource } from '@discordjs/voice' // importing voice library from discord.js
-import config from './config.json' assert {type: "json"} // importing config
-import token from './token.json' assert {type: "json"} // importing token
+import { readFile } from 'fs/promises' // importing fs/promises library
+
 const CLIENT = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] }) // creating a new client
 
-// imports from json
-const TOKEN = token.token // token
-const CLIENT_ID = config.client_id // client id
+// importing from json
+const CONFIG = JSON.parse( await readFile('./config.json', 'utf8') ) // importing config
+const TOKEN = JSON.parse( await readFile('./token.json', 'utf8') ).token // importing token
 
-const enableResponse = config.messages.soundEnableResponse // importing soundEnableResponse from config.json
-const disableResponse = config.messages.soundDisableResponse // importing soundDisableResponse from config.json
-const publicResponse = config.messages.soundPublicResponse // importing soundPublicResponse from config.json
-const privateResponse = config.messages.soundPrivateResponse // importing soundPrivateResponse from config.json
-const repoResponse = config.messages.repoResponse // importing repoResponse from config.json
-const vineboomResponse = config.messages.vineboomResponse // importing vineboomResponse from config.json
-const objectionResponse = config.messages.objectionResponse // importing objectionResponse from config.json
-const maxInterval = config.frequency // importing frequency from config.json
+const CLIENT_ID = CONFIG.client_id // client id
 
-const vineboomPath = config.paths.vineboom // path to the vineboom sound effect
+const enableResponse = CONFIG.messages.soundEnableResponse // importing soundEnableResponse from config.json
+const disableResponse = CONFIG.messages.soundDisableResponse // importing soundDisableResponse from config.json
+const publicResponse = CONFIG.messages.soundPublicResponse // importing soundPublicResponse from config.json
+const privateResponse = CONFIG.messages.soundPrivateResponse // importing soundPrivateResponse from config.json
+const repoResponse = CONFIG.messages.repoResponse // importing repoResponse from config.json
+const vineboomResponse = CONFIG.messages.vineboomResponse // importing vineboomResponse from config.json
+const objectionResponse = CONFIG.messages.objectionResponse // importing objectionResponse from config.json
+const maxInterval = CONFIG.frequency // importing frequency from config.json
+
+const vineboomPath = CONFIG.paths.vineboom // path to the vineboom sound effect
 const objectionPath = config.paths.objection // path to the objection sound effect
 const fillerPath = config.paths.filler // path to the 1hz sound effect
 
