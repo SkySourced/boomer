@@ -8,7 +8,7 @@
         "soundPrivateResponse": "order is in place"
     },
     "paths": { // sound file locations
-        "vineboom": "./vineboom.mp3",
-        "objection": "./objection.mp3"
+        "vineboom": "./assets/vineboom.mp3",
+        "objection": "./assets/objection.mp3"
     }
 }
