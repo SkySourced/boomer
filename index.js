@@ -1,10 +1,10 @@
 import { Client, GatewayIntentBits, Routes, PermissionFlagsBits, Collection } from 'discord.js' // importing required libraries from discord.js
 import { REST } from '@discordjs/rest' // importing rest library from discord.js
 import { SlashCommandBuilder } from '@discordjs/builders' // importing builder library from discord.js
-import { joinVoiceChannel, getVoiceConnection, createAudioPlayer, createAudioResource } from '@discordjs/voice' // creating a new client
-import config from './config.json' // importing config
-import token from './token.json' // importing voice library from discord.js
-const CLIENT = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] }) // importing token
+import { joinVoiceChannel, getVoiceConnection, createAudioPlayer, createAudioResource } from '@discordjs/voice' // importing voice library from discord.js
+import config from './config.json' assert {type: "json"} // importing config
+import token from './token.json' assert {type: "json"} // importing token
+const CLIENT = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] }) // creating a new client
 
 // imports from json
 const TOKEN = token.token // token
@@ -16,6 +16,7 @@ const publicResponse = config.messages.soundPublicResponse // importing soundPub
 const privateResponse = config.messages.soundPrivateResponse // importing soundPrivateResponse from config.json
 const vineboomResponse = config.messages.vineboomResponse // importing vineboomResponse from config.json
 const objectionResponse = config.messages.objectionResponse // importing objectionResponse from config.json
+const maxInterval = config.frequency // importing frequency from config.json
 
 const vineboomPath = config.paths.vineboom // path to the vineboom sound effect
 const objectionPath = config.paths.objection // path to the objection sound effect
@@ -26,7 +27,6 @@ const objectionPlayer = createAudioPlayer()
 
 let resource
 
-const maxInterval = 20 // max interval between sound effects (mins)
 
 vineBoomPlayer.on('error', error => {
   console.error(error)
