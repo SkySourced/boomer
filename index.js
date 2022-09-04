@@ -31,6 +31,9 @@ let resource
 vineBoomPlayer.on('error', error => {
   console.error(error)
 })
+objectionPlayer.on('error', error => {
+  console.error(error)
+})
 
 const rest = new REST({ version: '9' }).setToken(TOKEN) // creating a new rest client to sync slash commands
 
