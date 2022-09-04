@@ -27,4 +27,4 @@ This command links to this page, for bug reports and to get information on how t
 Use [this link](https://discord.com/api/oauth2/authorize?client_id=1012847083629334548&permissions=2150632480&scope=bot) to add the bot to any server you have the Manage Server permission in. Please be aware the bot is still relatively untested, so bugs are likely and reporting them helps fix them.
 
 ## Contact
-If you have any sound effect requests, questions, feature ideas, or anything else, contact me on Discord at SkyBlu#0407.
+If you have any sound effect requests, questions, feature ideas, or anything else, open a PR and let me know.
