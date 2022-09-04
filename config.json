@@ -12,6 +12,7 @@
     },
     "paths": {
         "vineboom": "./assets/vineboom.mp3",
-        "objection": "./assets/objection.mp3"
+        "objection": "./assets/objection.mp3",
+        "filler": "./assets/1hz.mp3"
     }
 }

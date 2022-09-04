@@ -21,6 +21,7 @@ const maxInterval = config.frequency // importing frequency from config.json
 
 const vineboomPath = config.paths.vineboom // path to the vineboom sound effect
 const objectionPath = config.paths.objection // path to the objection sound effect
+const fillerPath = config.paths.filler // path to the 1hz sound effect
 
 // player def
 const vineBoomPlayer = createAudioPlayer()
@@ -119,6 +120,17 @@ async function syncSlashCommands (guildId) {
   }
 }
 
+function playFiller(player, amount, i){
+  resource = createAudioResource(fillerPath) // creating a new audio resource (1 second 1hz sound)
+  player.play(resource) // playing the audio resource
+  player.on(AudioPlayerStatus.Idle, () => { // when the audio resource is done playing
+    i++; // increment i
+    if(i < amount){ // if there is still more time to fill
+      playFiller(player, amount, i) // play another second
+    }
+  })
+}
+
 function playVineBoom () {
   resource = createAudioResource(vineboomPath) // create audio resource (vineboom)
   vineBoomPlayer.play(resource) // play the audio
@@ -127,7 +139,9 @@ function playVineBoom () {
 
 function resetVineBoom () {
   vineBoomPlayer.stop(resource) // stop the audio (in case it hasn't finished playing (probably not necessary))
-  const interval = Math.ceil(Math.random() * maxInterval * 60000) // random interval between 0 and 1200 seconds (20 mins)
+  const interval = Math.ceil(Math.random() * maxInterval * 60) // random interval from 0 to maxInterval (mins) so * 60 to get seconds
+  let i = 0; // counter
+  playFiller(vineBoomPlayer, interval, i) // play filler sound for the interval
   setTimeout(playVineBoom, interval) // play the sound effect again after a random amount of time
 }
 
@@ -140,6 +154,8 @@ function playObjection () {
 function resetObjection () {
   objectionPlayer.stop(resource) // stop the audio (in case it hasn't finished playing (probably not necessary))
   const interval = Math.ceil(Math.random() * maxInterval * 60000) // random interval between 0 and 1200 seconds (20 mins)
+  let i = 0; // counter
+  playFiller(objectionPlayer, interval, i) // play filler sound for the interval
   setTimeout(playObjection, interval) // play the sound effect again after a random amount of time
 }
 
