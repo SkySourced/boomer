@@ -7,8 +7,8 @@ import { readFile } from 'fs/promises' // importing fs/promises library
 const CLIENT = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] }) // creating a new client
 
 // importing from json
-const CONFIG = JSON.parse( await readFile('./config.json', 'utf8') ) // importing config
-const TOKEN = JSON.parse( await readFile('./token.json', 'utf8') ).token // importing token
+const CONFIG = JSON.parse(await readFile('./config.json', 'utf8')) // importing config
+const TOKEN = JSON.parse(await readFile('./token.json', 'utf8')).token // importing token
 
 const CLIENT_ID = CONFIG.client_id // client id
 
@@ -22,8 +22,8 @@ const objectionResponse = CONFIG.messages.objectionResponse // importing objecti
 const maxInterval = CONFIG.frequency // importing frequency from config.json
 
 const vineboomPath = CONFIG.paths.vineboom // path to the vineboom sound effect
-const objectionPath = config.paths.objection // path to the objection sound effect
-const fillerPath = config.paths.filler // path to the 1hz sound effect
+const objectionPath = CONFIG.paths.objection // path to the objection sound effect
+// const fillerPath = CONFIG.paths.filler // path to the 1hz sound effect
 
 // player def
 const vineBoomPlayer = createAudioPlayer()
@@ -125,14 +125,14 @@ async function syncSlashCommands (guildId) {
   }
 }
 
-function playFiller(player, amount, i){
+/* function playFiller (player, amount, i) {
   resource = createAudioResource(fillerPath) // creating a new audio resource (1 second 1hz sound)
   player.play(resource) // playing the audio resource
   i++
-  if(i < amount){
+  if (i < amount) {
     setTimeout(playFiller(player, amount, i), 1000) // playing the filler sound every second
   }
-}
+} */
 
 function playVineBoom () {
   resource = createAudioResource(vineboomPath) // create audio resource (vineboom)
@@ -143,8 +143,8 @@ function playVineBoom () {
 function resetVineBoom () {
   vineBoomPlayer.stop(resource) // stop the audio (in case it hasn't finished playing (probably not necessary))
   const interval = Math.ceil(Math.random() * maxInterval * 60) // random interval from 0 to maxInterval (mins) so * 60 to get seconds
-  let i = 0; // counter
-  playFiller(vineBoomPlayer, interval, i) // play filler sound for the interval
+  // const i = 0 // counter
+  // playFiller(vineBoomPlayer, interval, i) // play filler sound for the interval
   setTimeout(playVineBoom, interval) // play the sound effect again after a random amount of time
 }
 
@@ -157,8 +157,8 @@ function playObjection () {
 function resetObjection () {
   objectionPlayer.stop(resource) // stop the audio (in case it hasn't finished playing (probably not necessary))
   const interval = Math.ceil(Math.random() * maxInterval * 60000) // random interval between 0 and 1200 seconds (20 mins)
-  let i = 0; // counter
-  playFiller(objectionPlayer, interval, i) // play filler sound for the interval
+  // const i = 0 // counter
+  // playFiller(objectionPlayer, interval, i) // play filler sound for the interval
   setTimeout(playObjection, interval) // play the sound effect again after a random amount of time
 }
 
