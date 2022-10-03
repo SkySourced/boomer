@@ -163,14 +163,14 @@ function resetObjection () {
 }
 
 function join (voiceState, cache) {
-  const connection = joinVoiceChannel({
+  const connection = joinVoiceChannel({ // actually join the call
     channelId: voiceState.channelId,
     guildId: voiceState.guild.id,
     adapterCreator: voiceState.guild.voiceAdapterCreator
   })
-  if (guildDataStorage.get(voiceState.guild.id).sfx === 'vineboom') {
-    connection.subscribe(vineBoomPlayer)
-  } else if (guildDataStorage.get(voiceState.guild.id).sfx === 'objection') {
+  if (guildDataStorage.get(voiceState.guild.id).sfx === 'vineboom') { // if the guild's effect is vineboom
+    connection.subscribe(vineBoomPlayer) // subscribe the correct player to the current connection
+  } else if (guildDataStorage.get(voiceState.guild.id).sfx === 'objection') { // if the guild's effect is objection
     connection.subscribe(objectionPlayer)
   }
   guildDataStorage.set(voiceState.guild.id, cache)
