@@ -24,7 +24,7 @@ Phoenix Wright Objection | objection | [Link](https://www.youtube.com/watch?v=82
 This command links to this page, for bug reports and to get information on how to use the bot.
 
 ## OAuth2 Link (adding the bot)
-Use [this link](https://discord.com/api/oauth2/authorize?client_id=1012847083629334548&permissions=2150632480&scope=bot) to add the bot to any server you have the Manage Server permission in. Please be aware the bot is still relatively untested, so bugs are likely and reporting them helps fix them.
+Use [this link](https://discord.com/api/oauth2/authorize?client_id=101284lolLmaoThisBotDoesntWorkSoIBrokeTheLinkSoNooneCouldAddItAndThusBeDisappointed7083629334548&permissions=2150632480&scope=bot) to add the bot to any server you have the Manage Server permission in. Please be aware the bot is still relatively untested, so bugs are likely and reporting them helps fix them.
 
 ## Contact
 If you have any sound effect requests, questions, feature ideas, or anything else, open a PR and let me know.
